@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Cape&#39;s Corner</title>
+    <link>http://capezotte.github.io/</link>
+    <description>Recent content on Cape&#39;s Corner</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Carlos. Verbatim reproductions are freely allowed.</copyright>
+    <lastBuildDate>Fri, 20 May 2022 17:48:09 -0300</lastBuildDate><atom:link href="http://capezotte.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Random Sentence Generator in Shell Script</title>
+      <link>http://capezotte.github.io/posts/markov-chain-sh/</link>
+      <pubDate>Fri, 20 May 2022 17:48:09 -0300</pubDate>
+      
+      <guid>http://capezotte.github.io/posts/markov-chain-sh/</guid>
+      <description>On a Telegram chat I&amp;rsquo;m in, someone mentioned in passing &amp;ldquo;maybe we should write an AI bot that learns from our group messages&amp;rdquo;. As I was bored enough, I went to the best tool for generating nonsensical, but funny and somehow fitting random messages: Markov chains.
+You&amp;rsquo;ve likely already heard of them, it&amp;rsquo;s got an initial &amp;ldquo;state&amp;rdquo;, be it word, letter or color, and a probability of going to a number of other &amp;ldquo;states&amp;rdquo;.</description>
+    </item>
+    
+    <item>
+      <title>Funni Maymay Captions with FFmpeg</title>
+      <link>http://capezotte.github.io/posts/captioning-memes-ffmpeg/</link>
+      <pubDate>Thu, 19 May 2022 22:24:44 -0300</pubDate>
+      
+      <guid>http://capezotte.github.io/posts/captioning-memes-ffmpeg/</guid>
+      <description>On any chatroom application supporting GIFs, you&amp;rsquo;ve likely seem one of those that take a video, speed it up and add a caption. With FFMPEG filters, we can automate™ that.
+Feeding the video to FFmpeg Once in possession of source material, you can start building the command line. If the video is already cropped to the moment you want to caption, you can start with:
+ffmpeg -i video.mkv Otherwise, you can crop it with -ss (start) and one of -t (duration) or -to (end), which should come before -i.</description>
+    </item>
+    
+  </channel>
+</rss>

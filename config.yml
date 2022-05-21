@@ -1,0 +1,12 @@
+baseURL: 'http://capezotte.github.io/'
+languageCode: 'en-us'
+title: "Cape's Corner"
+theme: "papermod"
+publishDir: "docs"
+copyright: "© Carlos. Verbatim reproductions are freely allowed."
+
+params:
+  homeInfoParams:
+    Title: "Welcome to my blog."
+    Content: "We have _technology!_"
+

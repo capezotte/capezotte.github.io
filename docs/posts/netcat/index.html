@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>File Transfers with Netcat | Cape&#39;s Corner</title>
+<meta name="keywords" content="">
+<meta name="description" content="If you have two computers on the same local network, in addition to &ldquo;standard&rdquo; ways of transferring data (cloud storage, Bluetooth, scp/sshfs, etc.), I&rsquo;d like to add one more: the netcat (nc) command.
+There&rsquo;s no need for key or PIN exchange, special hardware or working Internet connection; the only requirement is that both computers be connected to the same access point (like a router or phone hotspot).
+Installing On many distributions, there are at least two options for netcat: GNU netcat and BSD netcat.">
+<meta name="author" content="">
+<link rel="canonical" href="http://capezotte.github.io/posts/netcat/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.ec8da366ca2fb647537ccb7a8f6fa5b4e9cd3c7a0d3171dd2d3baad1e49c8bfc.css" integrity="sha256-7I2jZsovtkdTfMt6j2&#43;ltOnNPHoNMXHdLTuq0eSci/w=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.min.2840b7fccd34145847db71a290569594bdbdb00047097f75d6495d162f5d7dff.js" integrity="sha256-KEC3/M00FFhH23GikFaVlL29sABHCX911kldFi9dff8="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="http://capezotte.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://capezotte.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://capezotte.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://capezotte.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="http://capezotte.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="File Transfers with Netcat" />
+<meta property="og:description" content="If you have two computers on the same local network, in addition to &ldquo;standard&rdquo; ways of transferring data (cloud storage, Bluetooth, scp/sshfs, etc.), I&rsquo;d like to add one more: the netcat (nc) command.
+There&rsquo;s no need for key or PIN exchange, special hardware or working Internet connection; the only requirement is that both computers be connected to the same access point (like a router or phone hotspot).
+Installing On many distributions, there are at least two options for netcat: GNU netcat and BSD netcat." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://capezotte.github.io/posts/netcat/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-02-11T13:58:38-03:00" />
+<meta property="article:modified_time" content="2022-02-11T13:58:38-03:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="File Transfers with Netcat"/>
+<meta name="twitter:description" content="If you have two computers on the same local network, in addition to &ldquo;standard&rdquo; ways of transferring data (cloud storage, Bluetooth, scp/sshfs, etc.), I&rsquo;d like to add one more: the netcat (nc) command.
+There&rsquo;s no need for key or PIN exchange, special hardware or working Internet connection; the only requirement is that both computers be connected to the same access point (like a router or phone hotspot).
+Installing On many distributions, there are at least two options for netcat: GNU netcat and BSD netcat."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://capezotte.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "File Transfers with Netcat",
+      "item": "http://capezotte.github.io/posts/netcat/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "File Transfers with Netcat",
+  "name": "File Transfers with Netcat",
+  "description": "If you have two computers on the same local network, in addition to \u0026ldquo;standard\u0026rdquo; ways of transferring data (cloud storage, Bluetooth, scp/sshfs, etc.), I\u0026rsquo;d like to add one more: the netcat (nc) command.\nThere\u0026rsquo;s no need for key or PIN exchange, special hardware or working Internet connection; the only requirement is that both computers be connected to the same access point (like a router or phone hotspot).\nInstalling On many distributions, there are at least two options for netcat: GNU netcat and BSD netcat.",
+  "keywords": [
+    
+  ],
+  "articleBody": "If you have two computers on the same local network, in addition to “standard” ways of transferring data (cloud storage, Bluetooth, scp/sshfs, etc.), I’d like to add one more: the netcat (nc) command.\nThere’s no need for key or PIN exchange, special hardware or working Internet connection; the only requirement is that both computers be connected to the same access point (like a router or phone hotspot).\nInstalling On many distributions, there are at least two options for netcat: GNU netcat and BSD netcat. For instance, on Arch-like distros:\n# pacman -S netcat :: There are 2 providers available for netcat: :: Repository world  1) gnu-netcat :: Repository galaxy  2) openbsd-netcat Check your distro’s repository for more information.\nBoth work for this example, and can transfer between one another. I’ve even done netcat transfers between BSD netcat (main computer) and GNU netcat (Termux).\nSingle file transfers Setting up the receiving machine To initiate a transfer of a single file, run this command on the receiving end:\nnc -l 7777  outfile This will start netcat in listen mode on port 7777, and will direct its output (the received data) to a file named outfile.\n 7777 is just an example and you can pick any number greater than 1024 as the port (numbers smaller than 1024 are reserved for system services running as root). Don’t forget to specify the  outfile; otherwise, the file’s contents (which might contain garbled/control characters) will be printed to the terminal. You don’t want that to happen on the Linux tty.  Finding out the receiving end’s local IP address In order to send the file, knowing the receiving end’s local IP address is needed. This can be done by looking for lines with inet in ip addr show’s output and picking the first without 127.0.0.1 or ::1 (which only work within the computer).\n$ ip addr show | grep inet  inet 127.0.0.1/8 [...] # does not work on other machines.  inet6 ::1/128 [...] # does not work on other machines.  inet 192.168.3.22/24 [...] # bingo! [...] Pick the dot-separated four number sequence after inet, discard what comes after the slash, and there’s your box’s IP address on the local network (on the example above, 192.168.3.22).\nOn some graphical environments, such as KDE, this information is given to you on the Network Settings menu (“IPv4 address”).\nSending the file Now, go on the computer with the file you want to send, and type:\nnc 192.168.3.22 7777 If you used a number other than 7777 on step 1, or found a different IP address on step 2, adjust the command accordingly.\nThe transfer is initiated, and netcat will use whatever file you specified with  as the standard input, sending it over the network. No indication of progress is given except for the file growing at the receiving end, however.\nMultiple files transfer nc can acutally transfer any kind of data over the local network – you could leverage it to make different parts of a pipeline run on different machines.\nTherefore, by creating a tarball in one machine, sending it over the network, and extracting it on another, it’d be equivalent to transferring multiple files.\n# On the receiving end. # Extracts the tarball and lists created files. nc -l 7777 | tar xvf- # On the sending end. # Create a tarball and send it over a pipe to nc. tar cf- picture1.jpg picture2.jpg | nc 192.168.3.22 7777 This is the logical combination of nc sending data over the network, and tar being able to bundle files.\n Tip: You can use GNU tar’s --xform option to sanitize filenames if you’re sending them to an Android phone or an NTFS filesystem. For instance: --xform='s@[^A-Za-z0-9_.-/]@@g' to only allow normal ASCII characters in filenames.  Progress indicators If you’re sending something big and progress indicators give you peace of mind, you can use dd status=progress or the dedicated pv program:\n# pv # Receiving end nc -l 7777 | pv  outfile # Sending end pv 7777 # dd # Receiving end nc -l 7777 | dd status=progress  outfile # Sending end dd status=progress 7777 Using dd/pv on both ends is not necessary. They’re only there to measure the transfer speed, and skipping them on one of the ends is not going to prevent nc for establishing a connection and transferring data, as long as you keep  in the right places.\nYou could go nuts and combine both with tar (with tar | pv | nc; nc | pv | tar)!\nClosing words I hope this works as an introduction to netcat and its versatility. I usually send SSH keys through netcat as it’s a very simple method requiring litte setup.\nIn fact, I’ve only shown a fraction of its power, and with creativity and CLI knowledge, many more uses can be found for it, enriching normal terminal programs with network capabilities.\n",
+  "wordCount" : "827",
+  "inLanguage": "en",
+  "datePublished": "2022-02-11T13:58:38-03:00",
+  "dateModified": "2022-02-11T13:58:38-03:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://capezotte.github.io/posts/netcat/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Cape's Corner",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://capezotte.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://capezotte.github.io/" accesskey="h" title="Cape&#39;s Corner (Alt + H)">Cape&#39;s Corner</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      File Transfers with Netcat
+    </h1>
+    <div class="post-meta"><span title='2022-02-11 13:58:38 -0300 -03'>February 11, 2022</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>If you have two computers on the same local network, in addition to &ldquo;standard&rdquo; ways of transferring data (cloud storage, Bluetooth, scp/sshfs, etc.), I&rsquo;d like to add one more: the netcat (<code>nc</code>) command.</p>
+<p>There&rsquo;s no need for key or PIN exchange, special hardware or working Internet connection; the only requirement is that both computers be connected to the same access point (like a router or phone hotspot).</p>
+<h1 id="installing">Installing<a hidden class="anchor" aria-hidden="true" href="#installing">#</a></h1>
+<p>On many distributions, there are at least two options for netcat: GNU netcat and BSD netcat. For instance, on Arch-like distros:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span># pacman -S netcat
+</span></span><span style="display:flex;"><span>:: There are 2 providers available for netcat:
+</span></span><span style="display:flex;"><span>:: Repository world
+</span></span><span style="display:flex;"><span>   1) gnu-netcat
+</span></span><span style="display:flex;"><span>:: Repository galaxy
+</span></span><span style="display:flex;"><span>   2) openbsd-netcat
+</span></span></code></pre></div><p>Check your distro&rsquo;s repository for more information.</p>
+<p>Both work for this example, and can transfer between one another. I&rsquo;ve even done netcat transfers between BSD netcat (main computer) and GNU netcat (Termux).</p>
+<h1 id="single-file-transfers">Single file transfers<a hidden class="anchor" aria-hidden="true" href="#single-file-transfers">#</a></h1>
+<h2 id="setting-up-the-receiving-machine">Setting up the receiving machine<a hidden class="anchor" aria-hidden="true" href="#setting-up-the-receiving-machine">#</a></h2>
+<p>To initiate a transfer of a single file, run this command on the receiving end:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nc -l <span style="color:#ae81ff">7777</span> &gt; outfile
+</span></span></code></pre></div><p>This will start netcat in <strong>l</strong>isten mode on port 7777, and will direct its output (the received data) to a file named <code>outfile</code>.</p>
+<ul>
+<li>7777 is just an example and you can pick any number greater than 1024 as the port (numbers smaller than 1024 are reserved for system services running as root).</li>
+<li>Don&rsquo;t forget to specify the <code>&gt; outfile</code>; otherwise, the file&rsquo;s contents (which might contain garbled/control characters) will be printed to the terminal. You don&rsquo;t want that to happen on the Linux tty.</li>
+</ul>
+<h2 id="finding-out-the-receiving-ends-local-ip-address">Finding out the receiving end&rsquo;s local IP address<a hidden class="anchor" aria-hidden="true" href="#finding-out-the-receiving-ends-local-ip-address">#</a></h2>
+<p>In order to send the file, knowing the receiving end&rsquo;s local IP address is needed. This can be done by looking for lines with <code>inet</code> in <code>ip addr show</code>&rsquo;s output and picking the first without <code>127.0.0.1</code> or <code>::1</code> (which only work within the computer).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span>$ ip addr show | grep inet
+</span></span><span style="display:flex;"><span>    inet 127.0.0.1/8  [...] # does not work on other machines.
+</span></span><span style="display:flex;"><span>    inet6 ::1/128     [...] # does not work on other machines.
+</span></span><span style="display:flex;"><span>    inet 192.168.3.22/24 [...] # bingo!
+</span></span><span style="display:flex;"><span>[...]
+</span></span></code></pre></div><p>Pick the dot-separated four number sequence after <code>inet</code>, discard what comes after the slash, and there&rsquo;s your box&rsquo;s IP address on the local network (on the example above, <code>192.168.3.22</code>).</p>
+<p>On some graphical environments, such as KDE, this information is given to you on the Network Settings menu (&ldquo;IPv4 address&rdquo;).</p>
+<h2 id="sending-the-file">Sending the file<a hidden class="anchor" aria-hidden="true" href="#sending-the-file">#</a></h2>
+<p>Now, go on the computer with the file you want to send, and type:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nc 192.168.3.22 <span style="color:#ae81ff">7777</span> &lt; /path/to/file
+</span></span></code></pre></div><p>If you used a number other than 7777 on step 1, or found a different IP address on step 2, adjust the command accordingly.</p>
+<p>The transfer is initiated, and netcat will use whatever file you specified with <code>&lt;</code> as the standard input, sending it over the network. No indication of progress is given except for the file growing at the receiving end, however.</p>
+<h1 id="multiple-files-transfer">Multiple files transfer<a hidden class="anchor" aria-hidden="true" href="#multiple-files-transfer">#</a></h1>
+<p><code>nc</code> can acutally transfer <em>any</em> kind of data over the local network &ndash; you could leverage it to make different parts of a pipeline run on different machines.</p>
+<p>Therefore, by creating a tarball in one machine, sending it over the network, and extracting it on another, it&rsquo;d be equivalent to transferring multiple files.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># On the receiving end.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Extracts the tarball and lists created files.</span>
+</span></span><span style="display:flex;"><span>nc -l <span style="color:#ae81ff">7777</span> | tar xvf-
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># On the sending end.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create a tarball and send it over a pipe to nc.</span>
+</span></span><span style="display:flex;"><span>tar cf- picture1.jpg picture2.jpg | nc 192.168.3.22 <span style="color:#ae81ff">7777</span>
+</span></span></code></pre></div><p>This is the logical combination of <code>nc</code> sending data over the network, and <code>tar</code> being able to bundle files.</p>
+<ul>
+<li>Tip: You can use GNU <code>tar</code>&rsquo;s <code>--xform</code> option to sanitize filenames if you&rsquo;re sending them to an Android phone or an NTFS filesystem. For instance: <code>--xform='s@[^A-Za-z0-9_.-/]@@g'</code> to only allow normal ASCII characters in filenames.</li>
+</ul>
+<h1 id="progress-indicators">Progress indicators<a hidden class="anchor" aria-hidden="true" href="#progress-indicators">#</a></h1>
+<p>If you&rsquo;re sending something big and progress indicators give you peace of mind, you can use <code>dd status=progress</code> or the dedicated <a href="http://www.ivarch.com/programs/pv.shtml"><code>pv</code></a> program:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># pv</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Receiving end</span>
+</span></span><span style="display:flex;"><span>nc -l <span style="color:#ae81ff">7777</span> | pv &gt; outfile
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Sending end</span>
+</span></span><span style="display:flex;"><span>pv &lt; infile | nc 192.168.3.22 <span style="color:#ae81ff">7777</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># dd</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Receiving end</span>
+</span></span><span style="display:flex;"><span>nc -l <span style="color:#ae81ff">7777</span> | dd status<span style="color:#f92672">=</span>progress &gt; outfile
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Sending end</span>
+</span></span><span style="display:flex;"><span>dd status<span style="color:#f92672">=</span>progress &lt; infile | nc 192.168.3.22 <span style="color:#ae81ff">7777</span>
+</span></span></code></pre></div><p>Using <code>dd</code>/<code>pv</code> on both ends is not necessary. They&rsquo;re only there to measure the transfer speed, and skipping them on one of the ends is not going to prevent <code>nc</code> for establishing a connection and transferring data, as long as you keep <code>&lt; &gt;</code> in the right places.</p>
+<p>You could go nuts and combine both with <code>tar</code> (with <code>tar | pv | nc</code>; <code>nc | pv | tar</code>)!</p>
+<h1 id="closing-words">Closing words<a hidden class="anchor" aria-hidden="true" href="#closing-words">#</a></h1>
+<p>I hope this works as an introduction to netcat and its versatility. I usually send SSH keys through netcat as it&rsquo;s a very simple method requiring litte setup.</p>
+<p>In fact, I&rsquo;ve only shown a fraction of its power, and with creativity and CLI knowledge, many more uses can be found for it, enriching normal terminal programs with network capabilities.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© Carlos. Verbatim reproductions with attribution are freely allowed.</span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

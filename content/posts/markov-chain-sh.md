@@ -27,7 +27,7 @@ The logic is, the first word of a sentence is printed, with a leading space. Aft
 
 Therefore, this scripts generates a "database" of word pairs, so looking for lines starting with a given word and a space (`grep "^$WORD "`) and filtering them through `shuf -n1` is enough.
 
-To generate the database, just write, for instance, `./mkdb < src.txt > src.db`. Appending to this file also works.
+To generate the database, just write, for instance, `./mkdb < src.txt > src.db`. Appending to the output file also works.
 
 If it feels familiar, it's basically the same format as [this older article exploring the same idea](https://0x0f0f0f.github.io/blog/markov-bot/).
 

@@ -6,8 +6,19 @@
     <description>Recent content in Posts on Cape&#39;s Corner</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>© Carlos. Verbatim reproductions are freely allowed.</copyright>
-    <lastBuildDate>Fri, 20 May 2022 17:48:09 -0300</lastBuildDate><atom:link href="http://capezotte.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>© Carlos. Verbatim reproductions with attribution are freely allowed.</copyright>
+    <lastBuildDate>Sun, 22 May 2022 20:29:37 -0300</lastBuildDate><atom:link href="http://capezotte.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Dealing with PDFs in the command line</title>
+      <link>http://capezotte.github.io/posts/pdf-tricks-sh/</link>
+      <pubDate>Sun, 22 May 2022 20:29:37 -0300</pubDate>
+      
+      <guid>http://capezotte.github.io/posts/pdf-tricks-sh/</guid>
+      <description>Generating a PDF from images You can use img2pdf:
+img2pdf -o out.pdf image1.png image2.png Replace out.pdf with a output filename and image1.png image2.png with the images you want joined in the PDF (feel free to use *).
+If some of your images are low-resolution and others are high-res, it helps to give the program a standard page size (-S) for all images; otherwise, each page will have a very different size.</description>
+    </item>
+    
     <item>
       <title>Random Sentence Generator in Shell Script</title>
       <link>http://capezotte.github.io/posts/markov-chain-sh/</link>
@@ -27,6 +38,17 @@ You&amp;rsquo;ve likely already heard of them, it&amp;rsquo;s got an initial &am
       <description>On any chatroom application supporting GIFs, you&amp;rsquo;ve likely seem one of those that take a video, speed it up and add a caption. With FFMPEG filters, we can automate™ that.
 Feeding the video to FFmpeg Once in possession of source material, you can start building the command line. If the video is already cropped to the moment you want to caption, you can start with:
 ffmpeg -i video.mkv Otherwise, you can crop it with -ss (start) and one of -t (duration) or -to (end), which should come before -i.</description>
+    </item>
+    
+    <item>
+      <title>File Transfers with Netcat</title>
+      <link>http://capezotte.github.io/posts/netcat/</link>
+      <pubDate>Fri, 11 Feb 2022 13:58:38 -0300</pubDate>
+      
+      <guid>http://capezotte.github.io/posts/netcat/</guid>
+      <description>If you have two computers on the same local network, in addition to &amp;ldquo;standard&amp;rdquo; ways of transferring data (cloud storage, Bluetooth, scp/sshfs, etc.), I&amp;rsquo;d like to add one more: the netcat (nc) command.
+There&amp;rsquo;s no need for key or PIN exchange, special hardware or working Internet connection; the only requirement is that both computers be connected to the same access point (like a router or phone hotspot).
+Installing On many distributions, there are at least two options for netcat: GNU netcat and BSD netcat.</description>
     </item>
     
   </channel>

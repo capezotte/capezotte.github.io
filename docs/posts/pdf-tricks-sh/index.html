@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Dealing with PDFs in the command line | Cape&#39;s Corner</title>
+<meta name="keywords" content="">
+<meta name="description" content="Generating a PDF from images You can use img2pdf:
+img2pdf -o out.pdf image1.png image2.png Replace out.pdf with a output filename and image1.png image2.png with the images you want joined in the PDF (feel free to use *).
+If some of your images are low-resolution and others are high-res, it helps to give the program a standard page size (-S) for all images; otherwise, each page will have a very different size.">
+<meta name="author" content="">
+<link rel="canonical" href="http://capezotte.github.io/posts/pdf-tricks-sh/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.ec8da366ca2fb647537ccb7a8f6fa5b4e9cd3c7a0d3171dd2d3baad1e49c8bfc.css" integrity="sha256-7I2jZsovtkdTfMt6j2&#43;ltOnNPHoNMXHdLTuq0eSci/w=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.min.2840b7fccd34145847db71a290569594bdbdb00047097f75d6495d162f5d7dff.js" integrity="sha256-KEC3/M00FFhH23GikFaVlL29sABHCX911kldFi9dff8="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="http://capezotte.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://capezotte.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://capezotte.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://capezotte.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="http://capezotte.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Dealing with PDFs in the command line" />
+<meta property="og:description" content="Generating a PDF from images You can use img2pdf:
+img2pdf -o out.pdf image1.png image2.png Replace out.pdf with a output filename and image1.png image2.png with the images you want joined in the PDF (feel free to use *).
+If some of your images are low-resolution and others are high-res, it helps to give the program a standard page size (-S) for all images; otherwise, each page will have a very different size." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://capezotte.github.io/posts/pdf-tricks-sh/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-05-22T20:29:37-03:00" />
+<meta property="article:modified_time" content="2022-05-22T20:29:37-03:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Dealing with PDFs in the command line"/>
+<meta name="twitter:description" content="Generating a PDF from images You can use img2pdf:
+img2pdf -o out.pdf image1.png image2.png Replace out.pdf with a output filename and image1.png image2.png with the images you want joined in the PDF (feel free to use *).
+If some of your images are low-resolution and others are high-res, it helps to give the program a standard page size (-S) for all images; otherwise, each page will have a very different size."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://capezotte.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Dealing with PDFs in the command line",
+      "item": "http://capezotte.github.io/posts/pdf-tricks-sh/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Dealing with PDFs in the command line",
+  "name": "Dealing with PDFs in the command line",
+  "description": "Generating a PDF from images You can use img2pdf:\nimg2pdf -o out.pdf image1.png image2.png Replace out.pdf with a output filename and image1.png image2.png with the images you want joined in the PDF (feel free to use *).\nIf some of your images are low-resolution and others are high-res, it helps to give the program a standard page size (-S) for all images; otherwise, each page will have a very different size.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Generating a PDF from images You can use img2pdf:\nimg2pdf -o out.pdf image1.png image2.png Replace out.pdf with a output filename and image1.png image2.png with the images you want joined in the PDF (feel free to use *).\nIf some of your images are low-resolution and others are high-res, it helps to give the program a standard page size (-S) for all images; otherwise, each page will have a very different size. It accepts international standard paper sizes (see the --help for which) as well as WIDTHxHEIGHT with regular units (cm, mm, in…):\nimg2pdf -S200cmx200cm -o out.pdf smallimage.png bigimage.jpg ImageMagick’s convert utility is more widespread and works with more formats, but causes noticeable quality loss during conversion, so I don’t recommend it.\nConverting office documents to PDF LibreOffice provides a --convert-to option that works without spawning a GUI. It creates a file of the same name as the original but with changed extension on the shell’s working directory.\nSay you run the following on a terminal:\n$ cd ~/Documents $ soffice --convert-to pdf ~/Downloads/assignment.docx This will create/overwrite(!) assignment.pdf on your Documents folder (since you cd’d there).\n--convert-to accepts every extension that LibreOffice can read/write; you could use it for headless docx → odt, ppt → odp, etc. conversions.\nJoining PDFs Poppler comes with pdfunite, which can be used like this:\npdfunite pdf1.pdf pdf2.pdf out.pdf  Never forget the out.pdf when using globs.  Extracting page ranges from a PDF pdftk is really a Swiss Army Knife for dealing with PDFs with many subcommands. But, focusing on the basics, you can use pdftk in.pdf cat STARTPAGE-ENDPAGE output out.pdf for extracting page ranges within a PDF:\npdftk assignment.pdf cat 1-5 ouput firstpagesofassignment.pdf # Instead of number, you use the special keyword `end` so it prints everything towards the end pdftk assignment.pdf cat 400-end ouput lastpagesofassignment.pdf  Another possibility is writing a rather complicated script with Poppler’s pdfseparate (which can only extract individual pages to individual PDFs) and pdfunite, but pdftk is much more convenient.  Removing annotations Another use for pdftk is removing annotations (virtual highlights, text, etc.) from PDFs.\nThis is adapted from this GitHub Gist and its comments.\n#!/bin/sh for file; do pdftk \"$f\" output - uncompress | LANG=C LC_CTYPE=C sed '\\|^/Annots|d;\\|/Type /Annot|d' | pdftk - output \"${f%.pdf}.unannot.pdf\" compress done Compressing PDFs Alfred Klomp’s shrinkpdf is my choice for compressing PDFs with high-resolution images. I’ve made a variant that mixes gs and pdftk to try to conserve text resolution better.\n",
+  "wordCount" : "405",
+  "inLanguage": "en",
+  "datePublished": "2022-05-22T20:29:37-03:00",
+  "dateModified": "2022-05-22T20:29:37-03:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://capezotte.github.io/posts/pdf-tricks-sh/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Cape's Corner",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://capezotte.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://capezotte.github.io/" accesskey="h" title="Cape&#39;s Corner (Alt + H)">Cape&#39;s Corner</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Dealing with PDFs in the command line
+    </h1>
+    <div class="post-meta"><span title='2022-05-22 20:29:37 -0300 -03'>May 22, 2022</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h1 id="generating-a-pdf-from-images">Generating a PDF from images<a hidden class="anchor" aria-hidden="true" href="#generating-a-pdf-from-images">#</a></h1>
+<p>You can use <a href="https://gitlab.mister-muffin.de/josch/img2pdf"><code>img2pdf</code></a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>img2pdf -o out.pdf image1.png image2.png
+</span></span></code></pre></div><p>Replace <code>out.pdf</code> with a output filename and <code>image1.png image2.png</code> with the images you want joined in the PDF (feel free to use <code>*</code>).</p>
+<p>If some of your images are low-resolution and others are high-res, it helps to give the program a standard page size (<code>-S</code>) for all images; otherwise, each page will have a very different size. It accepts international standard paper sizes (see the <code>--help</code> for which) as well as <code>WIDTHxHEIGHT</code> with regular units (<code>cm</code>, <code>mm</code>, <code>in</code>&hellip;):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>img2pdf -S200cmx200cm -o out.pdf smallimage.png bigimage.jpg
+</span></span></code></pre></div><p>ImageMagick&rsquo;s <code>convert</code> utility is more widespread and works with more formats, but causes noticeable quality loss during conversion, so I don&rsquo;t recommend it.</p>
+<h1 id="converting-office-documents-to-pdf">Converting office documents to PDF<a hidden class="anchor" aria-hidden="true" href="#converting-office-documents-to-pdf">#</a></h1>
+<p>LibreOffice provides a <code>--convert-to</code> option that works without spawning a GUI. It creates a file of the same name as the original but with changed extension on the shell&rsquo;s working directory.</p>
+<p>Say you run the following on a terminal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>$ cd ~/Documents
+</span></span><span style="display:flex;"><span>$ soffice --convert-to pdf ~/Downloads/assignment.docx
+</span></span></code></pre></div><p>This will create/<strong>overwrite</strong>(!) <code>assignment.pdf</code> on your <code>Documents</code> folder (since you <code>cd</code>&rsquo;d there).</p>
+<p><code>--convert-to</code> accepts every extension that LibreOffice can read/write; you could use it for headless docx → odt, ppt → odp, etc. conversions.</p>
+<h1 id="joining-pdfs">Joining PDFs<a hidden class="anchor" aria-hidden="true" href="#joining-pdfs">#</a></h1>
+<p>Poppler comes with <code>pdfunite</code>, which can be used like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pdfunite pdf1.pdf pdf2.pdf out.pdf
+</span></span></code></pre></div><ul>
+<li>Never forget the <code>out.pdf</code> when using globs.</li>
+</ul>
+<h1 id="extracting-page-ranges-from-a-pdf">Extracting page ranges from a PDF<a hidden class="anchor" aria-hidden="true" href="#extracting-page-ranges-from-a-pdf">#</a></h1>
+<p><a href="https://gitlab.com/pdftk-java/pdftk"><code>pdftk</code></a> is really a Swiss Army Knife for dealing with PDFs with many subcommands. But, focusing on the basics, you can use <code>pdftk in.pdf cat STARTPAGE-ENDPAGE output out.pdf</code> for extracting page ranges within a PDF:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pdftk assignment.pdf cat 1-5 ouput firstpagesofassignment.pdf
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Instead of number, you use the special keyword `end` so it prints everything towards the end</span>
+</span></span><span style="display:flex;"><span>pdftk assignment.pdf cat 400-end ouput lastpagesofassignment.pdf
+</span></span></code></pre></div><ul>
+<li>Another possibility is writing a rather complicated script with Poppler&rsquo;s <code>pdfseparate</code> (which can only extract individual pages to individual PDFs) and <code>pdfunite</code>, but <code>pdftk</code> is much more convenient.</li>
+</ul>
+<h1 id="removing-annotations">Removing annotations<a hidden class="anchor" aria-hidden="true" href="#removing-annotations">#</a></h1>
+<p>Another use for <code>pdftk</code> is removing annotations (virtual highlights, text, etc.) from PDFs.</p>
+<p>This is adapted from <a href="https://gist.github.com/stefanschmidt/5248592">this GitHub Gist and its comments</a>.</p>
+<pre tabindex="0"><code>#!/bin/sh
+for file; do
+	pdftk &#34;$f&#34; output - uncompress |
+		LANG=C LC_CTYPE=C sed &#39;\|^/Annots|d;\|/Type /Annot|d&#39; |
+		pdftk - output &#34;${f%.pdf}.unannot.pdf&#34; compress
+done
+</code></pre><h1 id="compressing-pdfs">Compressing PDFs<a hidden class="anchor" aria-hidden="true" href="#compressing-pdfs">#</a></h1>
+<p><a href="https://github.com/aklomp/shrinkpdf">Alfred Klomp&rsquo;s <code>shrinkpdf</code></a> is my choice for compressing PDFs with high-resolution images. I&rsquo;ve made <a href="https://gist.github.com/capezotte/1bf25c00d9abab0d622d48d37c860316">a variant</a> that mixes <code>gs</code> and <code>pdftk</code> to try to conserve text resolution better.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© Carlos. Verbatim reproductions with attribution are freely allowed.</span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -3,7 +3,7 @@ languageCode: 'en-us'
 title: "Cape's Corner"
 theme: "papermod"
 publishDir: "docs"
-copyright: "© Carlos. Verbatim reproductions are freely allowed."
+copyright: "© Carlos. Verbatim reproductions with attribution are freely allowed."
 
 params:
   homeInfoParams:

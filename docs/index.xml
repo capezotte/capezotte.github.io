@@ -7,7 +7,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Carlos. Verbatim reproductions with attribution are freely allowed.</copyright>
-    <lastBuildDate>Sun, 22 May 2022 20:29:37 -0300</lastBuildDate><atom:link href="http://capezotte.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 26 May 2022 22:42:33 -0300</lastBuildDate><atom:link href="http://capezotte.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Granular privileges on Linux with setpriv</title>
+      <link>http://capezotte.github.io/posts/setpriv/</link>
+      <pubDate>Thu, 26 May 2022 22:42:33 -0300</pubDate>
+      
+      <guid>http://capezotte.github.io/posts/setpriv/</guid>
+      <description>setpriv is a neat little known tool included in many distributions&amp;rsquo; util-linux package. It changes privileges in a very granular way (including choosing specific Linux capabilities) and directly executes the program with changed permissions. It&amp;rsquo;s basically Linux-optimized version of runit&amp;rsquo;s chpst -u, using one fewer PID than su/sudo/runuser.
+Usage setpriv has many options, and an exhaustive tutorial would go on for far longer. This is only a fraction of what it can do, read the man 1 setpriv for more details.</description>
+    </item>
+    
     <item>
       <title>Dealing with PDFs in the command line</title>
       <link>http://capezotte.github.io/posts/pdf-tricks-sh/</link>

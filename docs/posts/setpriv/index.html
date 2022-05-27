@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Granular privileges on Linux with setpriv | Cape&#39;s Corner</title>
+<meta name="keywords" content="">
+<meta name="description" content="setpriv is a neat little known tool included in many distributions&rsquo; util-linux package. It changes privileges in a very granular way (including choosing specific Linux capabilities) and directly executes the program with changed permissions. It&rsquo;s basically Linux-optimized version of runit&rsquo;s chpst -u, using one fewer PID than su/sudo/runuser.
+Usage setpriv has many options, and an exhaustive tutorial would go on for far longer. This is only a fraction of what it can do, read the man 1 setpriv for more details.">
+<meta name="author" content="">
+<link rel="canonical" href="http://capezotte.github.io/posts/setpriv/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.ec8da366ca2fb647537ccb7a8f6fa5b4e9cd3c7a0d3171dd2d3baad1e49c8bfc.css" integrity="sha256-7I2jZsovtkdTfMt6j2&#43;ltOnNPHoNMXHdLTuq0eSci/w=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.min.2840b7fccd34145847db71a290569594bdbdb00047097f75d6495d162f5d7dff.js" integrity="sha256-KEC3/M00FFhH23GikFaVlL29sABHCX911kldFi9dff8="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="http://capezotte.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://capezotte.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://capezotte.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://capezotte.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="http://capezotte.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Granular privileges on Linux with setpriv" />
+<meta property="og:description" content="setpriv is a neat little known tool included in many distributions&rsquo; util-linux package. It changes privileges in a very granular way (including choosing specific Linux capabilities) and directly executes the program with changed permissions. It&rsquo;s basically Linux-optimized version of runit&rsquo;s chpst -u, using one fewer PID than su/sudo/runuser.
+Usage setpriv has many options, and an exhaustive tutorial would go on for far longer. This is only a fraction of what it can do, read the man 1 setpriv for more details." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://capezotte.github.io/posts/setpriv/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-05-26T22:42:33-03:00" />
+<meta property="article:modified_time" content="2022-05-26T22:42:33-03:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Granular privileges on Linux with setpriv"/>
+<meta name="twitter:description" content="setpriv is a neat little known tool included in many distributions&rsquo; util-linux package. It changes privileges in a very granular way (including choosing specific Linux capabilities) and directly executes the program with changed permissions. It&rsquo;s basically Linux-optimized version of runit&rsquo;s chpst -u, using one fewer PID than su/sudo/runuser.
+Usage setpriv has many options, and an exhaustive tutorial would go on for far longer. This is only a fraction of what it can do, read the man 1 setpriv for more details."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://capezotte.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Granular privileges on Linux with setpriv",
+      "item": "http://capezotte.github.io/posts/setpriv/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Granular privileges on Linux with setpriv",
+  "name": "Granular privileges on Linux with setpriv",
+  "description": "setpriv is a neat little known tool included in many distributions\u0026rsquo; util-linux package. It changes privileges in a very granular way (including choosing specific Linux capabilities) and directly executes the program with changed permissions. It\u0026rsquo;s basically Linux-optimized version of runit\u0026rsquo;s chpst -u, using one fewer PID than su/sudo/runuser.\nUsage setpriv has many options, and an exhaustive tutorial would go on for far longer. This is only a fraction of what it can do, read the man 1 setpriv for more details.",
+  "keywords": [
+    
+  ],
+  "articleBody": "setpriv is a neat little known tool included in many distributions’ util-linux package. It changes privileges in a very granular way (including choosing specific Linux capabilities) and directly executes the program with changed permissions. It’s basically Linux-optimized version of runit’s chpst -u, using one fewer PID than su/sudo/runuser.\nUsage setpriv has many options, and an exhaustive tutorial would go on for far longer. This is only a fraction of what it can do, read the man 1 setpriv for more details.\nSetting user and groups This is similar to what is provided by chpst -u. The relevant¹ options for setting user and group in setpriv are:\n --reuid - set the user (notice this alone won’t change groups); --regid - set the group;  Supplementary groups, which provide additional permissions (think, for example, your desktop Linux account being on video and audio groups besides the group named after your account), must be explicitly handled through one of these options:\n --init-groups: use the user’s supplementary groups as specified in /etc/groups --clear-groups: deletes supplementary groups, leaving only the one specified in --regid. --groups: allows you manually set additional groups. Comma-separated list of group names.  This might make setpriv seem verbose, but provides versatility.\nTo reset the environment and set HOME and SHELL variables, you can use the --reset-env option.\nFor a very simple example, this setpriv invocation reloads newsboat RSS feeds, and could be used at a system cronjob:\nsetpriv --reuid user --regid user --init-groups --reset-env -- newsboat -x reload For a more “real-world” example, a runit service using the built-in chpst, vs one using setpriv:\n# With runit exec chpst -u http:http myserver /server # With setpriv - --clear-groups emulates runit's chpst exec setpriv --reuid http --regid http --clear-groups -- myserver /server As it directly executes the process after dropping privileges, setpriv and the program it spawns share the same PID and process monitoring tools (even the simplest and most portable ones like runit) can send signals (including SIGKILL) and reliably know if they’re up.\n¹While there are individual --ruid --rgid --euid --egid options, the two above are suitable for most scripts.\nSetting capabilities However, the killer feature of setpriv is using it to add capability support without changing the file itself. Let’s say we want the previous myserver example to be able to bind to root-only ports even though it starts a non-root user. This can be accomplished with the net_bind_service capability, which can be added to process by setting --ambient-caps and --inh-caps to +net_bind_service.\nsetpriv \\ \t--reuid http --regid http --clear-groups \\ \t--ambient-caps +net_bind_service --inh-caps +net_bind_service -- \\ \tmyserver /server --port=80 To add more capabilites, you can separate the additions with commas:\nsetpriv \\ \t--reuid http --regid http --clear-groups \\ \t--ambient-caps +net_bind_service,+sys_admin --inh-caps +net_bind_service,+sys_admin -- \\ \tmyserver /server --port=80 If you find yourself wanting to remove a capability, just use -some_capability in the value for these options. As a shorthand, you can grant/remove all capabilities with +all / -all. For example, to explicitly remove all capabilities except for net_bind_service, you’d write -all,+net_bind_service on both options.\nWith this change, myserver will have the capability even if the file itself doesn’t have it.\nFor a more technical description of how Linux capabilities work in our case, read Transformation of capabilities during execve() from man 7 capabilities.\nAs I’ve remarked on the original version of this post on the Artix Linux forum, this can be used to help port systemd services that rely on its native support for capabilities.\nMisc tidbits What exactly is the problem of su, sudo and runuser in service scripts and cronjobs? setpriv is explicitly intended to drop privileges and directly executes the program after performing the requested changes, nothing more, nothing less.\nThe other three perform a lot of not-really-needed setup (controlled by their files in /etc/pam.d) and will spawn the program as an additional process, which is less efficient on a cronjob, and unacceptable for process monitors, which need direct access to the process to work as intended. Read more here.\nUsing the (non-POSIX) shell’s brace expansion In order to make scripts shorter, you can exploit the fact that the --reuid and --regid pair, as well as the --ambient-caps and --inh-caps pair, often take the same value.\n# bash/*ksh/zsh setpriv --re{u,g}id=http --init-groups --{ambient,inh}-caps=+net_bind_service -- myserver /server --port=80 # execline (included with s6-rc) # exploits how execline handles arrays within arguments multisubstitute { \tdefine -s u,g \"u g\" \tdefine -s a,i \"ambient inh\" } setpriv --re${u,g}id=http --init-groups --${a,i}-caps=+net_bind_service -- myserver /server --port=80 ",
+  "wordCount" : "743",
+  "inLanguage": "en",
+  "datePublished": "2022-05-26T22:42:33-03:00",
+  "dateModified": "2022-05-26T22:42:33-03:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://capezotte.github.io/posts/setpriv/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Cape's Corner",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://capezotte.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://capezotte.github.io/" accesskey="h" title="Cape&#39;s Corner (Alt + H)">Cape&#39;s Corner</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Granular privileges on Linux with setpriv
+    </h1>
+    <div class="post-meta"><span title='2022-05-26 22:42:33 -0300 -03'>May 26, 2022</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p><code>setpriv</code> is a neat little known tool included in many distributions&rsquo; <code>util-linux</code> package. It changes privileges in a very granular way (including choosing specific Linux capabilities) and directly executes the program with changed permissions. It&rsquo;s basically Linux-optimized version of runit&rsquo;s <code>chpst -u</code>, using one fewer PID than <code>su</code>/<code>sudo</code>/<code>runuser</code>.</p>
+<h1 id="usage">Usage<a hidden class="anchor" aria-hidden="true" href="#usage">#</a></h1>
+<p><code>setpriv</code> has many options, and an exhaustive tutorial would go on for far longer. This is only a fraction of what it can do, read the <code>man 1 setpriv</code> for more details.</p>
+<h2 id="setting-user-and-groups">Setting user and groups<a hidden class="anchor" aria-hidden="true" href="#setting-user-and-groups">#</a></h2>
+<p>This is similar to what is provided by <code>chpst -u</code>. The relevant¹ options for setting user and group in <code>setpriv</code> are:</p>
+<ul>
+<li><code>--reuid</code> - set the user (notice this alone <strong>won&rsquo;t</strong> change groups);</li>
+<li><code>--regid</code> - set the group;</li>
+</ul>
+<p>Supplementary groups, which provide additional permissions (think, for example, your desktop Linux account being on <code>video</code> and <code>audio</code> groups besides the group named after your account), must be explicitly handled through one of these options:</p>
+<ul>
+<li><code>--init-groups</code>: use the user&rsquo;s supplementary groups as specified in <code>/etc/groups</code></li>
+<li><code>--clear-groups</code>: deletes supplementary groups, leaving only the one specified in <code>--regid</code>.</li>
+<li><code>--groups</code>: allows you manually set additional groups. Comma-separated list of group names.</li>
+</ul>
+<p>This might make <code>setpriv</code> seem verbose, but provides versatility.</p>
+<p>To reset the environment and set <code>HOME</code> and <code>SHELL</code> variables, you can use the <code>--reset-env</code> option.</p>
+<p>For a very simple example, this <code>setpriv</code> invocation reloads newsboat RSS feeds, and could be used at a system cronjob:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>setpriv --reuid user --regid user --init-groups --reset-env -- newsboat -x reload
+</span></span></code></pre></div><p>For a more &ldquo;real-world&rdquo; example, a runit service using the built-in chpst, vs one using setpriv:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># With runit</span>
+</span></span><span style="display:flex;"><span>exec chpst -u http:http myserver /server
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># With setpriv - --clear-groups emulates runit&#39;s chpst</span>
+</span></span><span style="display:flex;"><span>exec setpriv --reuid http --regid http --clear-groups -- myserver /server
+</span></span></code></pre></div><p>As it directly executes the process after dropping privileges, <code>setpriv</code> and the program it spawns share the same PID and process monitoring tools (even the simplest and most portable ones like <code>runit</code>) can send signals (including SIGKILL) and reliably know if they&rsquo;re up.</p>
+<p>¹While there are individual <code>--ruid --rgid --euid --egid</code> options, the two above are suitable for most scripts.</p>
+<h2 id="setting-capabilities">Setting capabilities<a hidden class="anchor" aria-hidden="true" href="#setting-capabilities">#</a></h2>
+<p>However, the killer feature of setpriv is using it to add capability support without changing the file itself. Let&rsquo;s say we want the previous <code>myserver</code> example to be able to bind to root-only ports even though it starts a non-root user. This can be accomplished with the <code>net_bind_service</code> capability, which can be added to process by setting <code>--ambient-caps</code> and <code>--inh-caps</code> to <code>+net_bind_service</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>setpriv <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	--reuid http --regid http --clear-groups <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	--ambient-caps +net_bind_service --inh-caps +net_bind_service -- <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	myserver /server --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span></code></pre></div><p>To add more capabilites, you can separate the additions with commas:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>setpriv <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	--reuid http --regid http --clear-groups <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	--ambient-caps +net_bind_service,+sys_admin --inh-caps +net_bind_service,+sys_admin -- <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	myserver /server --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span></code></pre></div><p>If you find yourself wanting to remove a capability, just use <code>-some_capability</code> in the value for these options. As a shorthand, you can grant/remove all capabilities with <code>+all</code> / <code>-all</code>. For example, to explicitly remove all capabilities except for <code>net_bind_service</code>, you&rsquo;d write <code>-all,+net_bind_service</code> on both options.</p>
+<p>With this change, <code>myserver</code> will have the capability even if the file itself doesn&rsquo;t have it.</p>
+<p>For a more technical description of how Linux capabilities work in our case, read <em>Transformation of capabilities during execve()</em> from <code>man 7 capabilities</code>.</p>
+<p>As I&rsquo;ve remarked on the <a href="https://forum.artixlinux.org/index.php/topic,3360.0.html">original version of this post on the Artix Linux forum</a>, this can be used to help port systemd services that rely on its native support for capabilities.</p>
+<h1 id="misc-tidbits">Misc tidbits<a hidden class="anchor" aria-hidden="true" href="#misc-tidbits">#</a></h1>
+<h2 id="what-exactly-is-the-problem-of-su-sudo-and-runuser-in-service-scripts-and-cronjobs">What exactly is the problem of <code>su</code>, <code>sudo</code> and <code>runuser</code> in service scripts and cronjobs?<a hidden class="anchor" aria-hidden="true" href="#what-exactly-is-the-problem-of-su-sudo-and-runuser-in-service-scripts-and-cronjobs">#</a></h2>
+<p><code>setpriv</code> is explicitly intended to drop privileges and directly executes the program after performing the requested changes, nothing more, nothing less.</p>
+<p>The other three perform a lot of not-really-needed setup (controlled by their files in <code>/etc/pam.d</code>) and will spawn the program as an additional process, which is less efficient on a cronjob, and unacceptable for process monitors, which need direct access to the process to work as intended. <a href="https://jdebp.uk/FGA/dont-abuse-su-for-dropping-privileges.html">Read more here</a>.</p>
+<h2 id="using-the-non-posix-shells-brace-expansion">Using the (non-POSIX) shell&rsquo;s brace expansion<a hidden class="anchor" aria-hidden="true" href="#using-the-non-posix-shells-brace-expansion">#</a></h2>
+<p>In order to make scripts shorter, you can exploit the fact that the <code>--reuid</code> and <code>--regid</code> pair, as well as the <code>--ambient-caps</code> and <code>--inh-caps</code> pair, often take the same value.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># bash/*ksh/zsh</span>
+</span></span><span style="display:flex;"><span>setpriv --re<span style="color:#f92672">{</span>u,g<span style="color:#f92672">}</span>id<span style="color:#f92672">=</span>http --init-groups --<span style="color:#f92672">{</span>ambient,inh<span style="color:#f92672">}</span>-caps<span style="color:#f92672">=</span>+net_bind_service -- myserver /server --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># execline (included with s6-rc)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># exploits how execline handles arrays within arguments</span>
+</span></span><span style="display:flex;"><span>multisubstitute
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>	define -s u,g <span style="color:#e6db74">&#34;u g&#34;</span>
+</span></span><span style="display:flex;"><span>	define -s a,i <span style="color:#e6db74">&#34;ambient inh&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>setpriv --re<span style="color:#e6db74">${</span>u,g<span style="color:#e6db74">}</span>id<span style="color:#f92672">=</span>http --init-groups --<span style="color:#e6db74">${</span>a,i<span style="color:#e6db74">}</span>-caps<span style="color:#f92672">=</span>+net_bind_service --
+</span></span><span style="display:flex;"><span>myserver /server --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© Carlos. Verbatim reproductions with attribution are freely allowed.</span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
